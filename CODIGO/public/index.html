@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PokéImpact</title>
+    <link href="bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" id="logoHome">
+                <img src="img/logoPKM.png" alt="Logo" width="40" height="40" class="me-2">
+                PokéImpact
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav" id="navbarLinks">
+                    <li class="nav-item"><a class="nav-link" href="#" id="homeLink">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="pokedexLink">Pokédex</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="pcLink">PC</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="gachamonLink">Gachamón</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="miEquipoLink">Mi Equipo</a></li>
+                </ul>
+
+                <div class="ms-auto" id="authButtons">
+                    <button class="btn btn-outline-light me-2" data-bs-toggle="modal"
+                        data-bs-target="#loginModal">Iniciar sesión</button>
+                    <button class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#registerModal">Registrarse</button>
+                </div>
+
+                <div class="ms-auto d-none" id="userSection">
+                    <img src="img/user.png" alt="Avatar" width="50" height="50" class="me-2">
+                    <span id="usernameDisplay"></span>
+                    <button class="btn btn-danger ms-2" id="logoutButton">Cerrar sesión</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PANTALLA DE BIENVENIDA -->
+    <div id="introScreen" class="intro-screen" style="display: none;">
+        <video autoplay muted loop playsinline class="intro-video">
+            <source src="video/Pokémon - Opening 1 [ Español  Castellano ].mp4" type="video/mp4">
+            Tu navegador no soporta videos en HTML5.
+        </video>
+
+        <div class="intro-content">
+            <div class="intro-logo">
+                <img src="img/logoPKM.png" alt="Logo PokéImpact" class="intro-logo-img">
+                <h1 class="intro-title">PokéImpact</h1>
+            </div>
+
+            <button id="enterButton" class="btn btn-danger intro-button">Entrar</button>
+        </div>
+    </div>
+
+    <!-- SECCIÓN HOME -->
+    <div id="homeSection" class="container mt-5 d-flex flex-column align-items-center">
+        <h1 class="display-3 text-center mb-4">PokéImpact</h1>
+
+        <form id="searchForm" class="d-flex align-items-center mb-4">
+            <input type="text" class="form-control" id="pokemonInput" placeholder="Nombre Pokémon o Nº"
+                style="max-width: 300px;">
+            <button type="submit" class="btn btn-outline-dark ms-2" id="searchButton">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+
+        <div id="pokemonContainer" class="d-flex mb-3" style="max-width: 500px;">
+            <div id="pokemonImageContainer" style="flex: 1; text-align: center;">
+                <img id="pokemonImage" src="" alt="" class="img-fluid" style="display: none; max-width: 250px;">
+            </div>
+
+            <div id="pokemonInfo"
+                style="flex: 1; padding-left: 20px; display: flex; flex-direction: column; justify-content: center;">
+                <h3 id="pokemonName"></h3>
+                <p id="pokemonDescription"></p>
+                <div id="pokemonTypes" style="display: flex; flex-wrap: wrap;"></div>
+            </div>
+        </div>
+
+        <button id="shinyButton" class="btn btn-warning" style="display: none;">Ver versión variocolor</button>
+    </div>
+
+    <!-- SECCIÓN POKÉDEX -->
+    <div id="pokedexSection" class="section">
+        <h1 class="display-3 text-center mb-4">Pokédex</h1>
+        <div class="search-container">
+            <!-- FILTROS DE TIPOS -->
+            <div id="customFilterTypes" class="custom-filter mb-4">
+                <div class="filter-option active" data-type="ver-todos">
+                    <span>Ver todos</span>
+                </div>
+                <div class="filter-option" data-type="normal">
+                    <img src="tipos/normal.svg" alt="Normal">
+                    <span>Normal</span>
+                </div>
+                <div class="filter-option" data-type="fire">
+                    <img src="tipos/fire.svg" alt="Fuego">
+                    <span>Fuego</span>
+                </div>
+                <div class="filter-option" data-type="water">
+                    <img src="tipos/water.svg" alt="Agua">
+                    <span>Agua</span>
+                </div>
+                <div class="filter-option" data-type="grass">
+                    <img src="tipos/grass.svg" alt="Planta">
+                    <span>Planta</span>
+                </div>
+                <div class="filter-option" data-type="electric">
+                    <img src="tipos/electric.svg" alt="Eléctrico">
+                    <span>Eléctrico</span>
+                </div>
+                <div class="filter-option" data-type="ice">
+                    <img src="tipos/ice.svg" alt="Hielo">
+                    <span>Hielo</span>
+                </div>
+                <div class="filter-option" data-type="fighting">
+                    <img src="tipos/fighting.svg" alt="Lucha">
+                    <span>Lucha</span>
+                </div>
+                <div class="filter-option" data-type="poison">
+                    <img src="tipos/poison.svg" alt="Veneno">
+                    <span>Veneno</span>
+                </div>
+                <div class="filter-option" data-type="ground">
+                    <img src="tipos/ground.svg" alt="Tierra">
+                    <span>Tierra</span>
+                </div>
+                <div class="filter-option" data-type="flying">
+                    <img src="tipos/flying.svg" alt="Volador">
+                    <span>Volador</span>
+                </div>
+                <div class="filter-option" data-type="psychic">
+                    <img src="tipos/psychic.svg" alt="Psíquico">
+                    <span>Psíquico</span>
+                </div>
+                <div class="filter-option" data-type="bug">
+                    <img src="tipos/bug.svg" alt="Bicho">
+                    <span>Bicho</span>
+                </div>
+                <div class="filter-option" data-type="rock">
+                    <img src="tipos/rock.svg" alt="Roca">
+                    <span>Roca</span>
+                </div>
+                <div class="filter-option" data-type="ghost">
+                    <img src="tipos/ghost.svg" alt="Fantasma">
+                    <span>Fantasma</span>
+                </div>
+                <div class="filter-option" data-type="dark">
+                    <img src="tipos/dark.svg" alt="Siniestro">
+                    <span>Siniestro</span>
+                </div>
+                <div class="filter-option" data-type="dragon">
+                    <img src="tipos/dragon.svg" alt="Dragón">
+                    <span>Dragón</span>
+                </div>
+                <div class="filter-option" data-type="steel">
+                    <img src="tipos/steel.svg" alt="Acero">
+                    <span>Acero</span>
+                </div>
+                <div class="filter-option" data-type="fairy">
+                    <img src="tipos/fairy.svg" alt="Hada">
+                    <span>Hada</span>
+                </div>
+            </div>
+
+            <!-- FILTRO DE GENERACIONES -->
+            <div id="customFilterGenerations" class="custom-filter mb-4">
+                <div class="filter-option" data-gen="1"><span>Gen 1</span></div>
+                <div class="filter-option" data-gen="2"><span>Gen 2</span></div>
+                <div class="filter-option" data-gen="3"><span>Gen 3</span></div>
+                <div class="filter-option" data-gen="4"><span>Gen 4</span></div>
+                <div class="filter-option" data-gen="5"><span>Gen 5</span></div>
+                <div class="filter-option" data-gen="6"><span>Gen 6</span></div>
+                <div class="filter-option" data-gen="7"><span>Gen 7</span></div>
+                <div class="filter-option" data-gen="8"><span>Gen 8</span></div>
+                <div class="filter-option" data-gen="9"><span>Gen 9</span></div>
+            </div>
+
+            <!-- INPUT DE BÚSQUEDA -->
+            <form id="searchFormPokedex" class="d-flex justify-content-center mb-4">
+                <input type="text" class="form-control" id="pokemonInputPokedex" placeholder="Ej: Pikachu o 25"
+                    style="max-width: 300px;">
+                <button type="submit" class="btn btn-outline-dark ms-2" id="searchButtonPokedex">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div id="pokemonGrid" class="pokemon-grid"></div>
+    </div>
+
+
+    <!--MODAL PARA VER INFO DEL POKEMON EN LA POKEDEX -->
+    <div id="pokemonModal" class="modal fade" tabindex="-1" aria-labelledby="pokemonModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pokemonModalLabel">Información del Pokémon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body d-flex">
+                    <div class="p-3 text-center">
+                        <img id="modalPokemonSprite" src="" alt="Sprite Pokémon" class="img-fluid">
+                    </div>
+                    <div class="p-3">
+                        <h3 id="modalPokemonName"></h3>
+                        <p><strong>Número en la Pokédex:</strong> <span id="modalPokemonID"></span></p>
+                        <p><strong>Tipos:</strong> <span id="modalPokemonTypes"></span></p>
+                        <p><strong>Región:</strong> <span id="modalPokemonRegion"></span></p>
+                        <p><strong>Generación:</strong> <span id="modalPokemonGeneration"></span></p>
+                        <p><strong>Biografía:</strong> <span id="modalPokemonBio"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- BORRAR SECCION PC CONSOLA NAVEGADOR -->
+    <!-- localStorage.removeItem('pc'); -->
+
+    <!-- SECCIÓN PC -->
+    <div id="pcSection" class="d-none">
+        <div class="pc-container">
+            <!-- PANEL IZQUIERDO -->
+            <div id="pcInfoPanel" class="pokemon-info-panel">
+                <h3 class="info-panel-title">INFORMACIÓN DEL POKÉMON</h3>
+                <p id="emptyInfoMessage" class="text-muted">Selecciona un Pokémon para ver su información</p>
+
+                <img id="infoSprite" class="d-none" src="" alt="Sprite Pokémon" />
+                <h4 id="infoName" class="d-none"></h4>
+
+                <div id="infoTypes" class="info-types d-none"></div>
+
+                <button id="releaseButton" class="btn btn-danger mt-2 d-none">Liberar Pokémon</button>
+                <button id="addToTeamButton" class="btn btn-success mt-2 d-none">Añadir al equipo</button>
+            </div>
+
+            <!-- PANEL DERECHO -->
+            <div class="pc-box-container">
+                <div class="pc-header d-flex justify-content-center align-items-center mb-3">
+                    <h1 class="pc-title display-3 text-center mb-4 w-100">PC de Alguien</h1>
+                    <button id="prevBox" class="btn btn-secondary me-3">⬅️</button>
+                    <h3 id="boxName" class="mb-0">Caja 1</h3>
+                    <button id="nextBox" class="btn btn-secondary ms-3">➡️</button>
+                </div>
+
+                <div id="boxGrid" class="box-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INFORMACIÓN DEL POKÉMON EN EL PC -->
+    <div class="modal fade" id="pcPokemonModal" tabindex="-1" aria-labelledby="pcPokemonModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pcPokemonModalLabel">Detalles del Pokémon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <img id="infoSprite" src="" alt="Sprite Pokémon" class="img-fluid mb-3" style="max-width: 150px;">
+                    <h4 id="infoName">Nombre</h4>
+                    <div id="infoTypes" class="d-flex justify-content-center flex-wrap my-2"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="releaseButton" type="button" class="btn btn-danger">Liberar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN GACHAMON -->
+    <div id="gachamonSection" class="container d-none sin-margin">
+        <h1 class="display-3 text-center mb-4">Gachamón</h1>
+
+        <h4 class="coin-display">
+            Monedas: <span id="coinCount">10</span>
+            <img src="img/moneda.png" alt="Moneda" class="coin-icon">
+        </h4>
+
+        <button id="gachamonButton" class="btn btn-danger mb-4">Tirar 1 Moneda</button>
+
+        <div id="gachamonResult" class="mt-4" style="min-height: 300px;"></div>
+    </div>
+
+    <!-- SECCIÓN MI EQUIPO -->
+    <div id="miEquipoSection" class="container mt-3 d-none sin-margin">
+        <h1 class="display-3 text-center mb-4">Mi Equipo Pokémon</h1>
+
+        <div class="mi-equipo-container d-flex justify-content-center gap-5">
+
+            <div id="equipoGrid" class="equipo-grid"></div>
+
+            <div id="equipoInfoPanel" class="equipo-info-panel">
+                <div class="info-name-container mb-3">
+                    <label for="equipoPokemonName" class="form-label fw-bold">Nombre:</label>
+                    <input type="text" id="equipoPokemonName" class="form-control" placeholder="Selecciona un Pokémon"
+                        disabled>
+                    <button id="returnToPcButton" class="btn btn-danger btn-sm mt-2 w-100" disabled>Devolver al
+                        PC</button>
+                </div>
+
+                <div class="pokemon-details d-flex align-items-start gap-3">
+                    <img id="equipoPokemonArtwork" src="" alt="Artwork Pokémon" class="equipo-artwork d-none" />
+
+                    <div class="pokemon-description">
+                        <label class="form-label fw-bold">Descripción:</label>
+                        <p id="equipoPokemonDescription" class="text-muted">Selecciona un Pokémon para ver su
+                            descripción.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL LOGIN -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h3 class="modal-title" id="loginModalLabel">Inicio de sesión</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginUser" class="form-label">Nombre de usuario</label>
+                            <input type="text" class="form-control" id="loginUser" placeholder="Tu nombre de usuario">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="loginPassword"
+                                    placeholder="Tu contraseña">
+                                <button type="button" class="btn btn-outline-secondary" id="togglePasswordLogin">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100">Entrar</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTER -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h3 class="modal-title" id="registerModalLabel">Registro de usuario</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="registerUsername" class="form-label">Nombre de usuario</label>
+                            <input type="text" class="form-control" id="registerUsername" placeholder="Másh Ketchup">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="registerEmail"
+                                placeholder="PokéImpact@ejemplo.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label">Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="registerPassword"
+                                    placeholder="Tu contraseña">
+                                <button type="button" class="btn btn-outline-secondary" id="togglePasswordRegister">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100">Registrarse</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-light py-3">
+        <div class="container text-center">
+            <p class="mb-1">&copy; 2025 PokéImpact. Todos los derechos reservados.</p>
+            <p class="mb-0">
+                <a href="#" class="text-light text-decoration-none me-3">Términos y Condiciones</a>
+                <a href="#" class="text-light text-decoration-none me-3">Política de Privacidad</a>
+                <a href="#" class="text-light text-decoration-none">Contacto</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <!-- ======================================= -->
+    <!-- GESTIÓN DE SESIÓN Y USUARIO -->
+    <!-- ======================================= -->
+    <script src="session.js"></script>
+
+
+    <!-- ======================================= -->
+    <!-- VISIBILIDAD DE CONTRASEÑAS LOGIN Y REGISTER -->
+    <!-- ======================================= -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // ===============================
+            // Cambiar visibilidad en LOGIN
+            // ===============================
+            const togglePasswordLogin = document.getElementById("togglePasswordLogin");
+            const passwordFieldLogin = document.getElementById("loginPassword");
+            const iconLogin = togglePasswordLogin.querySelector("i");
+
+            togglePasswordLogin.addEventListener("click", function () {
+                if (passwordFieldLogin.type === "password") {
+                    passwordFieldLogin.type = "text";
+                    iconLogin.classList.remove("bi-eye-slash");
+                    iconLogin.classList.add("bi-eye");
+                } else {
+                    passwordFieldLogin.type = "password";
+                    iconLogin.classList.remove("bi-eye");
+                    iconLogin.classList.add("bi-eye-slash");
+                }
+            });
+
+            // ===============================
+            // Cambiar visibilidad en REGISTER
+            // ===============================
+            const togglePasswordRegister = document.getElementById("togglePasswordRegister");
+            const passwordFieldRegister = document.getElementById("registerPassword");
+            const iconRegister = togglePasswordRegister.querySelector("i");
+
+            togglePasswordRegister.addEventListener("click", function () {
+                if (passwordFieldRegister.type === "password") {
+                    passwordFieldRegister.type = "text";
+                    iconRegister.classList.remove("bi-eye-slash");
+                    iconRegister.classList.add("bi-eye");
+                } else {
+                    passwordFieldRegister.type = "password";
+                    iconRegister.classList.remove("bi-eye");
+                    iconRegister.classList.add("bi-eye-slash");
+                }
+            });
+
+        });
+    </script>
+
+
+</body>
+
+</html>

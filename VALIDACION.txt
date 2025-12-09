@@ -1,0 +1,6 @@
+El index.html lo revisé aqui, da errores de cosas vacías porque se rellenan automáticamente (como src="" en las img por ejemplo)
+Al hacer acciones y da otros errores de id duplicadas porque reutilizo conceptos por lo que estoy viendo
+https://validator.w3.org/
+
+Y el style.css aqui y no me lo dio perfecto
+https://jigsaw.w3.org/css-validator/
