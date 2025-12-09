@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 
 import userRoutes from "./routes/userRoutes.js";
 import pcRoutes from "./routes/pcRoutes.js";
+import teamRoutes from "./routes/teamRoutes.js";
 import db from "./db.js";
 
 const app = express();
@@ -64,7 +65,8 @@ app.use(
 //  RUTAS API
 // =========================
 app.use("/api/users", userRoutes);
-//app.use("/api/pc", pcRoutes);
+app.use("/api/pc", pcRoutes);
+app.use("/api/team", teamRoutes);
 
 // =========================
 //  FALLBACK SPA

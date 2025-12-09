@@ -27,6 +27,53 @@ document.addEventListener("DOMContentLoaded", function () {
         section.classList.remove("d-none");
     }
 
+    // ✅ NUEVA FUNCIÓN: Cargar PC desde la base de datos
+    async function loadPCFromDB() {
+        try {
+            const res = await fetch("http://localhost:5000/api/pc", {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (!res.ok) {
+                console.error("Error al cargar PC desde BD");
+                return;
+            }
+
+            const pokemonList = await res.json();
+            console.log("✅ PC cargado desde BD:", pokemonList);
+
+            // Disparar evento personalizado para que script.js lo procese
+            window.dispatchEvent(new CustomEvent('pcLoaded', { detail: pokemonList }));
+
+        } catch (error) {
+            console.error("❌ Error al cargar PC:", error);
+        }
+    }
+
+    async function loadTeamFromDB() {
+        try {
+            const res = await fetch("http://localhost:5000/api/team", {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (!res.ok) {
+                console.error("Error al cargar equipo desde BD");
+                return;
+            }
+
+            const teamList = await res.json();
+            console.log("✅ Equipo cargado desde BD:", teamList);
+
+            // Disparar evento personalizado para que script.js lo procese
+            window.dispatchEvent(new CustomEvent('teamLoaded', { detail: teamList }));
+
+        } catch (error) {
+            console.error("❌ Error al cargar equipo:", error);
+        }
+    }
+
     // Comprobar sesión al cargar
     fetch("http://localhost:5000/api/users/me", { method: "GET", credentials: "include" })
         .then(res => res.ok ? res.json() : Promise.reject("No autorizado"))
@@ -36,6 +83,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 showUserSection(data.username);
                 hideAuthButtons();
                 showSection(homeSection);
+
+                // ✅ CARGAR PC DESDE BD
+                loadPCFromDB();
+
+                loadTeamFromDB();
             }
         })
         .catch(() => {
@@ -67,6 +119,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     hideAuthButtons();
                     showSection(homeSection);
                     document.getElementById("loginForm").reset();
+
+                    // ✅ CARGAR PC DESDE BD DESPUÉS DEL LOGIN
+                    loadPCFromDB();
+
+                    loadTeamFromDB();
                 } else {
                     alert(data.message);
                 }
@@ -96,6 +153,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 hideAuthButtons();
                 showSection(homeSection);
                 document.getElementById("registerForm").reset();
+
+                // ✅ CARGAR PC DESDE BD DESPUÉS DEL REGISTRO (estará vacío)
+                loadPCFromDB();
+
+                loadTeamFromDB();
             })
             .catch(console.error);
     });
@@ -108,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 alert(data.message);
 
-                // Limpiar localStorage
+                // Limpiar localStorage (ya no usamos pc en localStorage, pero por si acaso)
                 localStorage.removeItem("pc");
                 localStorage.removeItem("miEquipo");
                 localStorage.removeItem("coins");

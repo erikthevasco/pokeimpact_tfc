@@ -27,12 +27,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const customFilterTypes = document.getElementById("customFilterTypes");
     const customFilterGenerations = document.getElementById("customFilterGenerations");
 
-
     const boxGrid = document.getElementById("boxGrid");
     const boxName = document.getElementById("boxName");
     const prevBoxBtn = document.getElementById("prevBox");
     const nextBoxBtn = document.getElementById("nextBox");
-
 
     const coinCountDisplay = document.getElementById("coinCount");
     const gachamonButton = document.getElementById("gachamonButton");
@@ -42,16 +40,17 @@ document.addEventListener("DOMContentLoaded", function () {
     let allPokemonData = [];
 
     let coins = parseInt(localStorage.getItem("coins")) || 10;
-    let pcBoxes = JSON.parse(localStorage.getItem("pc")) || [createNewBox()];
-    let currentBoxIndex = 0;
-    let miEquipo = JSON.parse(localStorage.getItem("miEquipo")) || [];
 
-    let pc = JSON.parse(localStorage.getItem("pc")) || [[]];
-    let currentBox = 0;
-
-    function savePC() {
-        localStorage.setItem("pc", JSON.stringify(pc));
+    // ✅ PC ahora se carga desde BD, inicialmente vacío
+    let pcBoxes = [];
+    for (let i = 0; i < MAX_BOXES; i++) {
+        pcBoxes.push(createNewBox());
     }
+    let currentBoxIndex = 0;
+
+    // ✅ Mi Equipo ahora se carga desde BD, inicialmente vacío
+    let miEquipo = new Array(MAX_TEAM_SIZE).fill(null);
+
     // ==============================
     // NAVEGACIÓN DE SECCIONES
     // ==============================
@@ -106,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
+
     // ==============================
     // POKEDEX SEARCH
     // ==============================
@@ -129,6 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
             renderPokemonGrid(filtered);
         }
     });
+
     // ==============================
     // FILTRO PERSONALIZADO POKEDEX
     // ==============================
@@ -155,7 +156,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const option = e.target.closest('.filter-option');
         if (!option) return;
 
-        // Quitar clase 'active' de los otros filtros y marcar el actual
         document.querySelectorAll('.filter-option').forEach(opt => opt.classList.remove('active'));
         option.classList.add('active');
 
@@ -168,10 +168,12 @@ document.addEventListener("DOMContentLoaded", function () {
             renderPokemonGrid(generationPokemon);
         }
     });
+
     // ==============================
     // HOME SEARCH + SHINY BUTTON
     // ==============================
     searchForm.addEventListener("submit", handleSearch);
+
     function handleSearch(event) {
         event.preventDefault();
         const pokemonNameOrId = pokemonInput.value.trim().toLowerCase();
@@ -186,6 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Por favor ingresa el nombre o número del Pokémon.");
             return;
         }
+
         const isNumeric = !isNaN(pokemonNameOrId);
         fetch(`https://pokeapi.co/api/v2/pokemon/${isNumeric ? pokemonNameOrId : pokemonNameOrId}`)
             .then(response => {
@@ -232,6 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 shinyButton.style.display = "none";
             });
     }
+
     // ==============================
     // CARGA Y RENDER DE LA POKEDEX
     // ==============================
@@ -249,6 +253,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 renderPokemonGrid(allPokemonData);
             });
     }
+
     function fetchPokemon(id) {
         return fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
             .then(response => response.json())
@@ -271,11 +276,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const data = await response.json();
             const pokemonList = data.pokemon_species.map(poke => {
-                const pokeId = poke.url.split("/")[6]; // Extrae el ID del Pokémon desde la URL
-                return allPokemonData.find(p => p.id == pokeId); // Busca el Pokémon en la lista general
-            }).filter(p => p !== undefined); // Filtra valores undefined
+                const pokeId = poke.url.split("/")[6];
+                return allPokemonData.find(p => p.id == pokeId);
+            }).filter(p => p !== undefined);
 
-            // Ordena por ID para que las cadenas evolutivas aparezcan juntas
             return pokemonList.sort((a, b) => a.id - b.id);
         } catch (error) {
             console.error(error);
@@ -288,7 +292,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("modalPokemonName").textContent = capitalizeFirstLetter(pokemon.name);
         document.getElementById("modalPokemonID").textContent = `#${pokemon.id}`;
 
-        // Mostrar tipos con iconos
         const typesContainer = document.getElementById("modalPokemonTypes");
         typesContainer.innerHTML = "";
         pokemon.types.forEach(type => {
@@ -308,7 +311,6 @@ document.addEventListener("DOMContentLoaded", function () {
             typesContainer.appendChild(typeElement);
         });
 
-        // Obtener generación y biografía desde la API
         try {
             const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.id}/`);
             if (!speciesResponse.ok) throw new Error("Error al obtener datos del Pokémon.");
@@ -316,11 +318,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.getElementById("modalPokemonGeneration").textContent = speciesData.generation.name.toUpperCase();
 
-            // Biografía en español
             const flavorTextEntry = speciesData.flavor_text_entries.find(entry => entry.language.name === "es");
             document.getElementById("modalPokemonBio").textContent = flavorTextEntry ? flavorTextEntry.flavor_text : "Información no disponible.";
 
-            // Obtener la región desde la URL de generación
             const genResponse = await fetch(speciesData.generation.url);
             if (!genResponse.ok) throw new Error("Error al obtener datos de la generación.");
             const genData = await genResponse.json();
@@ -333,11 +333,9 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("modalPokemonBio").textContent = "Información no disponible.";
         }
 
-        // Mostrar el modal
         const modal = new bootstrap.Modal(document.getElementById("pokemonModal"));
         modal.show();
     }
-
 
     function renderPokemonGrid(list) {
         pokemonGrid.innerHTML = "";
@@ -348,18 +346,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 <img src="${pokemon.sprite}" alt="${pokemon.name}">
                 <p>${capitalizeFirstLetter(pokemon.name)}</p>`;
 
-
             card.addEventListener("click", () => showPokemonPopup(pokemon));
-
             pokemonGrid.appendChild(card);
         });
     }
 
     fetchAllPokemon();
+
     // ==============================
     // GACHAMON
     // ==============================
     updateCoinsDisplay();
+
     gachamonButton.addEventListener("click", () => {
         if (coins <= 0) {
             alert("¡No tienes monedas suficientes!");
@@ -373,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const randomIndex = Math.floor(Math.random() * allPokemonData.length);
         const pokemon = allPokemonData[randomIndex];
-        const isShiny = Math.random() < 0.05; //PROBABILIDAD DE SHINY (5%)
+        const isShiny = Math.random() < 0.05;
 
         const pokeContainer = document.createElement("div");
         pokeContainer.classList.add("gachamon-pokemon");
@@ -404,10 +402,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         addPokemonToPC({ ...pokemon, isShiny });
     });
+
     function updateCoinsDisplay() {
         coinCountDisplay.textContent = coins;
         localStorage.setItem("coins", coins);
     }
+
     function createParticles(container) {
         const colors = ['#f1c40f', '#e67e22', '#1abc9c', '#3498db', '#9b59b6'];
         for (let i = 0; i < 20; i++) {
@@ -427,77 +427,103 @@ document.addEventListener("DOMContentLoaded", function () {
             setTimeout(() => container.removeChild(p), 1000);
         }
     }
+
     // ==============================
-    // PC CAJAS
+    // PC - CARGAR DESDE BASE DE DATOS
     // ==============================
-    // Botones para navegar entre cajas
+    window.addEventListener('pcLoaded', function (e) {
+        const pokemonList = e.detail;
+        console.log("📦 Procesando PC desde BD:", pokemonList);
+
+        // Resetear las cajas
+        pcBoxes = [];
+        for (let i = 0; i < MAX_BOXES; i++) {
+            pcBoxes.push(createNewBox());
+        }
+
+        // Colocar cada Pokémon en su caja y posición
+        pokemonList.forEach(poke => {
+            const boxIndex = poke.box_number - 1;
+            const position = poke.position_in_box;
+
+            if (boxIndex >= 0 && boxIndex < MAX_BOXES && position >= 0 && position < SLOTS_PER_BOX) {
+                pcBoxes[boxIndex][position] = {
+                    dbId: poke.id,
+                    id: poke.pokemon_id,
+                    name: poke.pokemon_name,
+                    sprite: poke.sprite_url,
+                    shiny_sprite: poke.sprite_url,
+                    isShiny: poke.is_shiny,
+                    types: []
+                };
+            }
+        });
+
+        currentBoxIndex = 0;
+        showCurrentBox();
+    });
+
+    // ==============================
+    // EQUIPO - CARGAR DESDE BASE DE DATOS
+    // ==============================
+    window.addEventListener('teamLoaded', function (e) {
+        const teamList = e.detail;
+        console.log("👥 Procesando equipo desde BD:", teamList);
+
+        // Resetear el equipo
+        miEquipo = new Array(MAX_TEAM_SIZE).fill(null);
+
+        // Colocar cada Pokémon en su posición
+        teamList.forEach(poke => {
+            const position = poke.position;
+
+            if (position >= 0 && position < MAX_TEAM_SIZE) {
+                miEquipo[position] = {
+                    dbId: poke.id,
+                    id: poke.pokemon_id,
+                    name: poke.pokemon_name,
+                    sprite: poke.sprite_url,
+                    shiny_sprite: poke.sprite_url,
+                    isShiny: poke.is_shiny,
+                    types: []
+                };
+            }
+        });
+
+        renderTeam();
+    });
+
+    // ==============================
+    // PC - FUNCIONES DE CAJAS
+    // ==============================
+    function createNewBox() {
+        return new Array(SLOTS_PER_BOX).fill(null);
+    }
+
     prevBoxBtn.addEventListener("click", () => {
         if (currentBoxIndex > 0) {
             currentBoxIndex--;
             showCurrentBox();
         }
     });
+
     nextBoxBtn.addEventListener("click", () => {
         if (currentBoxIndex < pcBoxes.length - 1) {
             currentBoxIndex++;
-        } else if (pcBoxes.length < MAX_BOXES) {
-            pcBoxes.push(createNewBox());
-            currentBoxIndex++;
-            savePC();
-        } else {
-            alert("Máximo número de cajas alcanzado.");
-        }
-        showCurrentBox();
-    });
-    // Crear una caja vacía
-    function createNewBox() {
-        return new Array(SLOTS_PER_BOX).fill(null);
-    }
-    // Guardar el estado del PC en localStorage
-    function savePC() {
-        localStorage.setItem("pc", JSON.stringify(pcBoxes));
-    }
-    // Añadir un Pokémon a la primera caja con hueco
-    async function addPokemonToPC(pokemon) {
-        for (let box of pcBoxes) {
-            const index = box.findIndex(slot => slot === null);
-            if (index !== -1) {
-                box[index] = pokemon;
-                savePC();
-                showCurrentBox();
-
-                // Guardar también en la base de datos
-                await savePokemonToDB(pokemon, pcBoxes.indexOf(box), index);
-
-                return true;
-            }
-        }
-        if (pcBoxes.length < MAX_BOXES) {
-            const newBox = createNewBox();
-            newBox[0] = pokemon;
-            pcBoxes.push(newBox);
-            currentBoxIndex = pcBoxes.length - 1;
-            savePC();
             showCurrentBox();
-
-            // Guardar también en la base de datos
-            await savePokemonToDB(pokemon, currentBoxIndex, 0);
-
-            return true;
         } else {
-            alert("PC lleno");
-            return false;
+            alert("No hay más cajas disponibles.");
         }
-    }
+    });
 
-    // Función para guardar pokémon en la base de datos
+    // ✅ GUARDAR POKÉMON EN LA BASE DE DATOS
     async function savePokemonToDB(pokemon, boxNumber, position) {
         console.log("🔵 Intentando guardar en BD:", pokemon);
         try {
             const payload = {
                 pokemon_id: pokemon.id,
                 pokemon_name: pokemon.name,
-                sprite_url: pokemon.isShiny ? pokemon.shiny_sprite : pokemon.sprite,
+                sprite_url: pokemon.isShiny && pokemon.shiny_sprite ? pokemon.shiny_sprite : pokemon.sprite,
                 box_number: boxNumber + 1,
                 is_shiny: pokemon.isShiny || false
             };
@@ -516,14 +542,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!res.ok) {
                 console.error("❌ Error al guardar en BD:", data.message);
+                return null;
             } else {
                 console.log("✅ Pokémon guardado en BD exitosamente");
+                return data.pokemon.id;
             }
         } catch (error) {
             console.error("❌ Error al guardar pokémon en BD:", error);
+            return null;
         }
     }
-    // Muestra la caja actual
+
+    // ✅ AÑADIR POKÉMON AL PC (CON BASE DE DATOS)
+    async function addPokemonToPC(pokemon) {
+        for (let boxIndex = 0; boxIndex < pcBoxes.length; boxIndex++) {
+            const box = pcBoxes[boxIndex];
+            const position = box.findIndex(slot => slot === null);
+
+            if (position !== -1) {
+                const dbId = await savePokemonToDB(pokemon, boxIndex, position);
+
+                if (dbId) {
+                    box[position] = { ...pokemon, dbId };
+                    showCurrentBox();
+                    return true;
+                } else {
+                    alert("Error al guardar el Pokémon en la base de datos");
+                    return false;
+                }
+            }
+        }
+
+        alert("PC lleno (10 cajas)");
+        return false;
+    }
+
+    // ✅ MOSTRAR CAJA ACTUAL
     function showCurrentBox() {
         boxGrid.innerHTML = "";
         boxName.textContent = `Caja ${currentBoxIndex + 1}`;
@@ -541,26 +595,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 img.alt = pokemon.name;
                 slot.appendChild(img);
 
-                // Click para mostrar la info en el panel
                 slot.addEventListener("click", () => showPokemonInfoInPanel(i));
             } else {
                 const empty = document.createElement("div");
                 empty.classList.add("empty-slot");
                 slot.appendChild(empty);
 
-                // Si haces click en vacío, se limpia el panel
                 slot.addEventListener("click", () => showPokemonInfoInPanel(null));
             }
 
             boxGrid.appendChild(slot);
         });
-        // Si no hay ningún Pokémon, limpia el panel
+
         const boxHasPokemon = box.some(p => p !== null);
         if (!boxHasPokemon) {
             showPokemonInfoInPanel(null);
         }
     }
-    // Muestra la info en el panel lateral izquierdo
+
+    // ✅ MOSTRAR INFO EN PANEL
     function showPokemonInfoInPanel(index) {
         const pokemon = pcBoxes[currentBoxIndex][index];
         const panel = document.getElementById("pcInfoPanel");
@@ -572,7 +625,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const addToTeamButton = document.getElementById("addToTeamButton");
 
         if (!pokemon) {
-            // Limpia el panel si no hay Pokémon
             sprite.classList.add("d-none");
             name.classList.add("d-none");
             typesContainer.classList.add("d-none");
@@ -581,7 +633,7 @@ document.addEventListener("DOMContentLoaded", function () {
             panel.querySelector("p").classList.remove("d-none");
             return;
         }
-        // Muestra los elementos y oculta el mensaje vacío
+
         panel.querySelector("p").classList.add("d-none");
         sprite.classList.remove("d-none");
         name.classList.remove("d-none");
@@ -600,11 +652,9 @@ document.addEventListener("DOMContentLoaded", function () {
             typesContainer.appendChild(icon);
         });
 
-        // Botón de liberar Pokémon
         releaseButton.onclick = () => releasePokemon(index);
 
-        // Botón de añadir al equipo
-        addToTeamButton.onclick = () => {
+        addToTeamButton.onclick = async () => {
             const equipoLleno = miEquipo.filter(p => p !== null).length >= MAX_TEAM_SIZE;
 
             if (equipoLleno) {
@@ -615,93 +665,164 @@ document.addEventListener("DOMContentLoaded", function () {
             const emptySlotIndex = miEquipo.findIndex(p => p === null);
 
             if (emptySlotIndex !== -1) {
-                miEquipo[emptySlotIndex] = pokemon;
-            } else {
-                miEquipo.push(pokemon);
+                // Guardar en BD primero
+                const dbId = await savePokemonToTeam(pokemon, emptySlotIndex);
+
+                if (dbId) {
+                    // Actualizar el array local
+                    miEquipo[emptySlotIndex] = { ...pokemon, dbId };
+
+                    // Eliminar del PC (tanto local como BD)
+                    const res = await fetch(`http://localhost:5000/api/pc/${pokemon.dbId}`, {
+                        method: "DELETE",
+                        credentials: "include"
+                    });
+
+                    if (res.ok) {
+                        pcBoxes[currentBoxIndex][index] = null;
+                        renderTeam();
+                        showCurrentBox();
+                        showPokemonInfoInPanel(null);
+
+                        const panel = document.getElementById("pcInfoPanel");
+                        if (panel) panel.classList.remove("d-none");
+                    } else {
+                        alert("Error al eliminar del PC");
+                    }
+                } else {
+                    alert("Error al agregar al equipo");
+                }
             }
-
-            pcBoxes[currentBoxIndex][index] = null;
-
-            saveEquipo();
-            savePC();
-            renderTeam();
-            showCurrentBox();
-
-            showPokemonInfoInPanel(null);
-
-            const panel = document.getElementById("pcInfoPanel");
-            if (panel) panel.classList.remove("d-none");
         };
-
-
     }
-    // Confirmar y liberar Pokémon
-    function releasePokemon(index) {
+
+    // ✅ LIBERAR POKÉMON (CON BASE DE DATOS)
+    async function releasePokemon(index) {
         const pokemon = pcBoxes[currentBoxIndex][index];
         if (!pokemon) return;
 
         const confirmRelease = confirm(`¿Estás segur@ de querer liberar a ${capitalizeFirstLetter(pokemon.name)}?`);
 
         if (confirmRelease) {
-            pcBoxes[currentBoxIndex][index] = null;
-            savePC();
-            showCurrentBox();
-            alert(`${capitalizeFirstLetter(pokemon.name)} ha sido liberado correctamente.`);
+            try {
+                const res = await fetch(`http://localhost:5000/api/pc/${pokemon.dbId}`, {
+                    method: "DELETE",
+                    credentials: "include"
+                });
 
-            showPokemonInfoInPanel(null);
+                if (res.ok) {
+                    pcBoxes[currentBoxIndex][index] = null;
+                    showCurrentBox();
+                    alert(`${capitalizeFirstLetter(pokemon.name)} ha sido liberado correctamente.`);
+                    showPokemonInfoInPanel(null);
 
-            const panel = document.getElementById("pcInfoPanel");
-            if (panel) panel.classList.remove("d-none");
+                    const panel = document.getElementById("pcInfoPanel");
+                    if (panel) panel.classList.remove("d-none");
+                } else {
+                    const error = await res.json();
+                    alert("Error al liberar el Pokémon: " + error.message);
+                }
+            } catch (error) {
+                console.error("❌ Error al liberar pokémon:", error);
+                alert("Error de conexión al liberar el Pokémon");
+            }
         }
     }
 
-    // Guardar el equipo en localStorage
-    function saveEquipo() {
-        localStorage.setItem("miEquipo", JSON.stringify(miEquipo));
-    }
-    // Renderizar el equipo actual
-    function renderTeam() {
-        const container = document.getElementById("miEquipoSection");
-        container.innerHTML = "<h2>Mi Equipo</h2>";
-        const grid = document.createElement("div");
-        grid.classList.add("pokemon-grid");
+    // ==============================
+    // MI EQUIPO
+    // ==============================
 
-        miEquipo.forEach((pokemon, index) => {
-            const card = document.createElement("div");
-            card.classList.add("pokemon-card");
-
-            card.innerHTML = `
-                <img src="${pokemon.isShiny ? pokemon.shiny_sprite : pokemon.sprite}" alt="${pokemon.name}">
-                <p>${capitalizeFirstLetter(pokemon.name)}</p>
-                <button class="btn btn-danger btn-sm mt-2">Devolver al PC</button>
-            `;
-
-            card.querySelector("button").onclick = () => {
-                const added = addPokemonToPC(pokemon);
-                if (added) {
-                    miEquipo.splice(index, 1);
-                    saveEquipo();
-                    renderTeam();
-                }
+    // ✅ GUARDAR POKÉMON EN EL EQUIPO (BD)
+    async function savePokemonToTeam(pokemon, position) {
+        console.log("🔵 Intentando guardar en equipo BD:", pokemon, "posición:", position);
+        try {
+            const payload = {
+                pokemon_id: pokemon.id,
+                pokemon_name: pokemon.name,
+                sprite_url: pokemon.isShiny && pokemon.shiny_sprite ? pokemon.shiny_sprite : pokemon.sprite,
+                position: position,
+                is_shiny: pokemon.isShiny || false
             };
 
-            grid.appendChild(card);
-        });
+            console.log("📦 Payload equipo:", payload);
 
-        container.appendChild(grid);
+            const res = await fetch("http://localhost:5000/api/team", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            console.log("📡 Respuesta del servidor:", res.status, data);
+
+            if (!res.ok) {
+                console.error("❌ Error al guardar en equipo BD:", data.message);
+                return null;
+            } else {
+                console.log("✅ Pokémon guardado en equipo BD exitosamente");
+                return data.pokemon.id;
+            }
+        } catch (error) {
+            console.error("❌ Error al guardar pokémon en equipo BD:", error);
+            return null;
+        }
     }
 
-    // Mostrar la primera caja y el equipo al cargar
-    showCurrentBox();
-    renderTeam();
-    // ==============================
-    // MI EQUIPO 
-    // ==============================
+    // ✅ ELIMINAR POKÉMON DEL EQUIPO (BD)
+    async function removePokemonFromTeam(dbId) {
+        try {
+            const res = await fetch(`http://localhost:5000/api/team/${dbId}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            if (res.ok) {
+                console.log("✅ Pokémon eliminado del equipo BD");
+                return true;
+            } else {
+                const error = await res.json();
+                console.error("❌ Error al eliminar del equipo:", error.message);
+                return false;
+            }
+        } catch (error) {
+            console.error("❌ Error al eliminar pokémon del equipo:", error);
+            return false;
+        }
+    }
+
+    // ✅ ACTUALIZAR NOMBRE EN BD
+    async function updatePokemonNameInTeam(dbId, newName) {
+        try {
+            const res = await fetch(`http://localhost:5000/api/team/${dbId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ pokemon_name: newName })
+            });
+
+            if (res.ok) {
+                console.log("✅ Nombre actualizado en BD");
+                return true;
+            } else {
+                console.error("❌ Error al actualizar nombre");
+                return false;
+            }
+        } catch (error) {
+            console.error("❌ Error:", error);
+            return false;
+        }
+    }
+
+    // ✅ YA NO SE USA localStorage
+    // function saveEquipo() {
+    //     localStorage.setItem("miEquipo", JSON.stringify(miEquipo));
+    // }
+
     function renderTeam() {
         const gridContainer = document.getElementById("equipoGrid");
-        const infoPanel = document.getElementById("equipoInfoPanel");
 
-        // Limpia el grid antes de renderizar
         gridContainer.innerHTML = "";
 
         for (let i = 0; i < MAX_TEAM_SIZE; i++) {
@@ -711,20 +832,14 @@ document.addEventListener("DOMContentLoaded", function () {
             const pokemon = miEquipo[i];
 
             if (pokemon) {
-                // Si hay un Pokémon en el slot
                 const img = document.createElement("img");
                 img.src = pokemon.isShiny ? pokemon.shiny_sprite : pokemon.sprite;
                 img.alt = pokemon.name;
 
                 slot.appendChild(img);
-
-                // CLICK en el Pokémon → Muestra su información en el panel
-                slot.addEventListener("click", () => {
-                    showTeamPokemonInfo(i);
-                });
+                slot.addEventListener("click", () => showTeamPokemonInfo(i));
 
             } else {
-                // Si el slot está vacío, Pokéball vacía
                 slot.classList.add("empty-equipo-slot");
 
                 const emptyImg = document.createElement("div");
@@ -735,16 +850,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 emptyImg.style.opacity = "0.2";
 
                 slot.appendChild(emptyImg);
-
-                // CLICK en el espacio vacío → Limpia el panel de info
-                slot.addEventListener("click", () => {
-                    showTeamPokemonInfo(null);
-                });
+                slot.addEventListener("click", () => showTeamPokemonInfo(null));
             }
 
             gridContainer.appendChild(slot);
         }
     }
+
     function showTeamPokemonInfo(index) {
         const inputName = document.getElementById("equipoPokemonName");
         const returnToPcButton = document.getElementById("returnToPcButton");
@@ -772,7 +884,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         description.textContent = pokemon.description || "Descripción no disponible.";
 
-        inputName.onblur = function () {
+        inputName.onblur = async function () {
             const newName = inputName.value.trim();
 
             if (newName === "") {
@@ -781,22 +893,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            pokemon.name = newName;
-            saveEquipo();
-            renderTeam();
+            // Actualizar en BD
+            const updated = await updatePokemonNameInTeam(pokemon.dbId, newName);
+
+            if (updated) {
+                pokemon.name = newName;
+                renderTeam();
+            } else {
+                alert("Error al actualizar el nombre");
+                inputName.value = capitalizeFirstLetter(pokemon.name);
+            }
         };
 
-        returnToPcButton.onclick = () => {
+        returnToPcButton.onclick = async () => {
             if (confirm(`¿Enviar a ${capitalizeFirstLetter(pokemon.name)} al PC?`)) {
-                const added = addPokemonToPC(pokemon);
+                // Agregar al PC primero
+                const added = await addPokemonToPC(pokemon);
+
                 if (added) {
-                    miEquipo[index] = null;
-                    saveEquipo();
-                    renderTeam();
-                    showTeamPokemonInfo(null);
-                    alert(`${capitalizeFirstLetter(pokemon.name)} ha sido enviado al PC.`);
+                    // Eliminar del equipo en BD
+                    const removed = await removePokemonFromTeam(pokemon.dbId);
+
+                    if (removed) {
+                        miEquipo[index] = null;
+                        renderTeam();
+                        showTeamPokemonInfo(null);
+                        alert(`${capitalizeFirstLetter(pokemon.name)} ha sido enviado al PC.`);
+                    } else {
+                        alert("Error al remover del equipo");
+                    }
                 }
             }
         };
     }
+
+    // Inicialización
+    showCurrentBox();
+    renderTeam();
 });
