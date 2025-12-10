@@ -3,15 +3,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const homeSection = document.getElementById("homeSection");
     const introScreen = document.getElementById("introScreen");
 
+    // ✅ Variable global para saber si el usuario está logueado
+    window.isUserLoggedIn = false;
+
     function showUserSection(username) {
         const userSection = document.getElementById("userSection");
         const usernameDisplay = document.getElementById("usernameDisplay");
         userSection.classList.remove("d-none");
         usernameDisplay.textContent = username;
+
+        // ✅ Marcar como logueado
+        window.isUserLoggedIn = true;
     }
 
     function hideUserSection() {
         document.getElementById("userSection").classList.add("d-none");
+
+        // ✅ Marcar como no logueado
+        window.isUserLoggedIn = false;
     }
 
     function showAuthButtons() {
@@ -25,6 +34,23 @@ document.addEventListener("DOMContentLoaded", function () {
     function showSection(section) {
         document.querySelectorAll(".section, #homeSection").forEach(s => s.classList.add("d-none"));
         section.classList.remove("d-none");
+    }
+
+    // ✅ NUEVA FUNCIÓN: Verificar si el usuario está logueado
+    function requireAuth(callback, sectionName = "esta sección") {
+        if (!window.isUserLoggedIn) {
+            alert(`Debes iniciar sesión para acceder a ${sectionName}`);
+
+            // Abrir modal de login
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+
+            return false;
+        }
+
+        // Si está logueado, ejecutar el callback
+        callback();
+        return true;
     }
 
     // ✅ NUEVA FUNCIÓN: Cargar PC desde la base de datos
@@ -51,6 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // ✅ NUEVA FUNCIÓN: Cargar equipo desde la base de datos
     async function loadTeamFromDB() {
         try {
             const res = await fetch("http://localhost:5000/api/team", {
@@ -87,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // ✅ CARGAR PC DESDE BD
                 loadPCFromDB();
 
+                // ✅ CARGAR EQUIPO DESDE BD
                 loadTeamFromDB();
             }
         })
@@ -123,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // ✅ CARGAR PC DESDE BD DESPUÉS DEL LOGIN
                     loadPCFromDB();
 
+                    // ✅ CARGAR EQUIPO DESDE BD DESPUÉS DEL LOGIN
                     loadTeamFromDB();
                 } else {
                     alert(data.message);
@@ -157,6 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // ✅ CARGAR PC DESDE BD DESPUÉS DEL REGISTRO (estará vacío)
                 loadPCFromDB();
 
+                // ✅ CARGAR EQUIPO DESDE BD DESPUÉS DEL REGISTRO (estará vacío)
                 loadTeamFromDB();
             })
             .catch(console.error);
@@ -170,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 alert(data.message);
 
-                // Limpiar localStorage (ya no usamos pc en localStorage, pero por si acaso)
+                // Limpiar localStorage
                 localStorage.removeItem("pc");
                 localStorage.removeItem("miEquipo");
                 localStorage.removeItem("coins");
@@ -188,5 +218,50 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("enterButton")?.addEventListener("click", function () {
         introScreen.style.display = "none";
         showSection(homeSection);
+    });
+
+    // ==============================
+    // ✅ PROTECCIÓN DE NAVEGACIÓN
+    // ==============================
+
+    // Home siempre es accesible
+    document.getElementById("logoHome")?.addEventListener("click", () => showSection(homeSection));
+    document.getElementById("homeLink")?.addEventListener("click", () => showSection(homeSection));
+
+    // Pokédex siempre es accesible (lectura)
+    document.getElementById("pokedexLink")?.addEventListener("click", () => {
+        const pokedexSection = document.getElementById("pokedexSection");
+        showSection(pokedexSection);
+    });
+
+    // PC requiere autenticación
+    document.getElementById("pcLink")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        requireAuth(() => {
+            const pcSection = document.getElementById("pcSection");
+            showSection(pcSection);
+            // Disparar evento para actualizar la vista del PC
+            window.dispatchEvent(new Event('showPC'));
+        }, "el PC");
+    });
+
+    // Gachamón requiere autenticación
+    document.getElementById("gachamonLink")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        requireAuth(() => {
+            const gachamonSection = document.getElementById("gachamonSection");
+            showSection(gachamonSection);
+        }, "el Gachamón");
+    });
+
+    // Mi Equipo requiere autenticación
+    document.getElementById("miEquipoLink")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        requireAuth(() => {
+            const miEquipoSection = document.getElementById("miEquipoSection");
+            showSection(miEquipoSection);
+            // Disparar evento para renderizar el equipo
+            window.dispatchEvent(new Event('showTeam'));
+        }, "Mi Equipo");
     });
 });

@@ -178,6 +178,7 @@
 
             <!-- FILTRO DE GENERACIONES -->
             <div id="customFilterGenerations" class="custom-filter mb-4">
+                <div class="filter-option" data-gen="ver-todos"><span>Ver todos</span></div>
                 <div class="filter-option" data-gen="1"><span>Gen 1</span></div>
                 <div class="filter-option" data-gen="2"><span>Gen 2</span></div>
                 <div class="filter-option" data-gen="3"><span>Gen 3</span></div>
@@ -228,11 +229,6 @@
             </div>
         </div>
     </div>
-
-
-    <!-- BORRAR SECCION PC CONSOLA NAVEGADOR -->
-    <!-- localStorage.removeItem('pc'); -->
-
     <!-- SECCIÓN PC -->
     <div id="pcSection" class="d-none">
         <div class="pc-container">
@@ -299,6 +295,7 @@
         </h4>
 
         <button id="gachamonButton" class="btn btn-danger mb-4">Tirar 1 Moneda</button>
+        <button id="gachamonAddCoins" class="btn btn-danger mb-4">Rellenar Monedas</button>
 
         <div id="gachamonResult" class="mt-4" style="min-height: 300px;"></div>
     </div>
@@ -363,6 +360,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-dark w-100">Entrar</button>
+                        <a href="#" id="linkToRegister" class="btn btn-link">¿No tienes una cuenta? ¡Regístrate!</a>
                     </form>
                 </div>
 
@@ -405,6 +403,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-danger w-100">Registrarse</button>
+                        <a href="#" id="linkToLogin" class="btn btn-link">¿Ya tienes una cuenta? ¡Inicia sesión!</a>
                     </form>
                 </div>
 
@@ -431,9 +430,8 @@
     <!-- ======================================= -->
     <script src="session.js"></script>
 
-
     <!-- ======================================= -->
-    <!-- VISIBILIDAD DE CONTRASEÑAS LOGIN Y REGISTER -->
+    <!-- VISIBILIDAD DE CONTRASEÑAS Y CAMBIO ENTRE MODALES -->
     <!-- ======================================= -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -476,10 +474,48 @@
                 }
             });
 
+            // ===============================
+            // ✅ CAMBIAR DE LOGIN A REGISTRO
+            // ===============================
+            const linkToRegister = document.getElementById("linkToRegister");
+            if (linkToRegister) {
+                linkToRegister.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    // Cerrar modal de login
+                    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    if (loginModal) loginModal.hide();
+
+                    // Esperar un poco y abrir modal de registro
+                    setTimeout(() => {
+                        const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                        registerModal.show();
+                    }, 300);
+                });
+            }
+
+            // ===============================
+            // ✅ CAMBIAR DE REGISTRO A LOGIN
+            // ===============================
+            const linkToLogin = document.getElementById("linkToLogin");
+            if (linkToLogin) {
+                linkToLogin.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    // Cerrar modal de registro
+                    const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+                    if (registerModal) registerModal.hide();
+
+                    // Esperar un poco y abrir modal de login
+                    setTimeout(() => {
+                        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                        loginModal.show();
+                    }, 300);
+                });
+            }
+
         });
     </script>
-
-
 </body>
 
 </html>

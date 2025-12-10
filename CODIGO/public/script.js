@@ -41,6 +41,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let coins = parseInt(localStorage.getItem("coins")) || 10;
 
+    let currentTypeFilter = null;
+    let currentGenFilter = null;
+
     // ✅ PC ahora se carga desde BD, inicialmente vacío
     let pcBoxes = [];
     for (let i = 0; i < MAX_BOXES; i++) {
@@ -114,11 +117,26 @@ document.addEventListener("DOMContentLoaded", function () {
         const query = pokedexSearchInput.value.trim().toLowerCase();
 
         if (!query) {
-            renderPokemonGrid(allPokemonData);
+            applyFilters();
             return;
         }
 
-        const filtered = allPokemonData.filter(pokemon =>
+        let filtered = allPokemonData
+
+        if (currentTypeFilter && currentTypeFilter !== "ver-todos") {
+            filtered = filtered.filter(pokemon =>
+                pokemon.types.includes(currentTypeFilter)
+            );
+        }
+
+        if (currentGenFilter && currentGenFilter !== "ver-todos") {
+            const genRange = getGenerationRange(currentGenFilter);
+            filtered = filtered.filter(pokemon =>
+                pokemon.id >= genRange.start && pokemon.id <= genRange.end
+            );
+        }
+
+        filtered = filtered.filter(pokemon =>
             pokemon.name.toLowerCase().includes(query) ||
             pokemon.id.toString() === query
         );
@@ -130,44 +148,93 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+
+
     // ==============================
-    // FILTRO PERSONALIZADO POKEDEX
+    // FUNCIÓN PARA OBTENER RANGOS DE GENERACIONES
+    // ==============================
+    function getGenerationRange(gen) {
+        const ranges = {
+            "ver-todos": { start: 1, end: 1025 },
+            "1": { start: 1, end: 151 },
+            "2": { start: 152, end: 251 },
+            "3": { start: 252, end: 386 },
+            "4": { start: 387, end: 493 },
+            "5": { start: 494, end: 649 },
+            "6": { start: 650, end: 721 },
+            "7": { start: 722, end: 809 },
+            "8": { start: 810, end: 905 },
+            "9": { start: 906, end: 1025 }
+        };
+        return ranges[gen] || { start: 1, end: 1025 };
+    }
+
+    // ==============================
+    // FILTRO POR TIPOS (MODIFICADO)
     // ==============================
     customFilterTypes.addEventListener('click', function (e) {
         const option = e.target.closest('.filter-option');
         if (!option) return;
 
-        document.querySelectorAll('.filter-option').forEach(opt => opt.classList.remove('active'));
+        // Actualizar visualización de botones activos (solo tipos)
+        document.querySelectorAll('#customFilterTypes .filter-option').forEach(opt =>
+            opt.classList.remove('active')
+        );
         option.classList.add('active');
 
-        const selectedType = option.getAttribute('data-type');
+        // Guardar el tipo seleccionado
+        currentTypeFilter = option.getAttribute('data-type');
 
-        if (selectedType === "ver-todos") {
-            renderPokemonGrid(allPokemonData);
-        } else {
-            const filteredPokemon = allPokemonData.filter(pokemon =>
-                pokemon.types.includes(selectedType)
-            );
-            renderPokemonGrid(filteredPokemon);
-        }
+        // Aplicar ambos filtros
+        applyFilters();
     });
 
-    customFilterGenerations.addEventListener("click", async function (e) {
+
+    // ==============================
+    // FILTRO POR GENERACIÓN (MODIFICADO)
+    // ==============================
+    customFilterGenerations.addEventListener("click", function (e) {
         const option = e.target.closest('.filter-option');
         if (!option) return;
 
-        document.querySelectorAll('.filter-option').forEach(opt => opt.classList.remove('active'));
+        // Actualizar visualización de botones activos (solo generaciones)
+        document.querySelectorAll('#customFilterGenerations .filter-option').forEach(opt =>
+            opt.classList.remove('active')
+        );
         option.classList.add('active');
 
-        const selectedGen = option.getAttribute('data-gen');
+        // Guardar la generación seleccionada
+        currentGenFilter = option.getAttribute('data-gen');
 
-        if (selectedGen === "ver-todos") {
-            renderPokemonGrid(allPokemonData);
-        } else {
-            const generationPokemon = await fetchGeneration(selectedGen);
-            renderPokemonGrid(generationPokemon);
-        }
+        // Aplicar ambos filtros
+        applyFilters();
     });
+
+
+
+    // ==============================
+    // FUNCIÓN PARA APLICAR TODOS LOS FILTROS
+    // ==============================
+    function applyFilters() {
+        let filtered = allPokemonData;
+
+        // Aplicar filtro de tipo
+        if (currentTypeFilter && currentTypeFilter !== "ver-todos") {
+            filtered = filtered.filter(pokemon =>
+                pokemon.types.includes(currentTypeFilter)
+            );
+        }
+
+        // Aplicar filtro de generación
+        if (currentGenFilter && currentGenFilter !== "ver-todos") {
+            const genRange = getGenerationRange(currentGenFilter);
+            filtered = filtered.filter(pokemon =>
+                pokemon.id >= genRange.start && pokemon.id <= genRange.end
+            );
+        }
+
+        renderPokemonGrid(filtered);
+    }
 
     // ==============================
     // HOME SEARCH + SHINY BUTTON
@@ -267,24 +334,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     types
                 };
             });
-    }
-
-    async function fetchGeneration(genId) {
-        try {
-            const response = await fetch(`https://pokeapi.co/api/v2/generation/${genId}`);
-            if (!response.ok) throw new Error("Error al obtener la generación");
-
-            const data = await response.json();
-            const pokemonList = data.pokemon_species.map(poke => {
-                const pokeId = poke.url.split("/")[6];
-                return allPokemonData.find(p => p.id == pokeId);
-            }).filter(p => p !== undefined);
-
-            return pokemonList.sort((a, b) => a.id - b.id);
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
     }
 
     async function showPokemonPopup(pokemon) {
@@ -403,6 +452,10 @@ document.addEventListener("DOMContentLoaded", function () {
         addPokemonToPC({ ...pokemon, isShiny });
     });
 
+    gachamonAddCoins.addEventListener("click", () => {
+        coins = 10;
+        updateCoinsDisplay();
+    });
     function updateCoinsDisplay() {
         coinCountDisplay.textContent = coins;
         localStorage.setItem("coins", coins);
@@ -926,6 +979,25 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
     }
+
+
+    // ==============================
+    // EVENTOS DE NAVEGACIÓN PROTEGIDA
+    // ==============================
+
+    // Evento para mostrar el PC
+    window.addEventListener('showPC', function () {
+        showCurrentBox();
+        showPokemonInfoInPanel(null);
+        const panel = document.getElementById("pcInfoPanel");
+        if (panel) panel.classList.remove("d-none");
+    });
+
+    // Evento para mostrar el equipo
+    window.addEventListener('showTeam', function () {
+        renderTeam();
+        showTeamPokemonInfo(null);
+    });
 
     // Inicialización
     showCurrentBox();
