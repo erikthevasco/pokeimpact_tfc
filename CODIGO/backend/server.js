@@ -13,7 +13,6 @@ import adminRoutes from "./routes/adminRoutes.js";
 const app = express();
 const PORT = 5000;
 
-// Necesario para rutas absolutas en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -40,7 +39,6 @@ app.use(cookieParser());
 // =========================
 //  SERVIR FRONTEND ESTÁTICO (ANTES DE SESSION)
 // =========================
-// La carpeta public está un nivel arriba (en CODIGO, no en backend)
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 // =========================
@@ -55,7 +53,7 @@ app.use(
         saveUninitialized: false,
         cookie: {
             httpOnly: true,
-            secure: false,     // Ok en localhost (HTTP)
+            secure: false,
             sameSite: "lax",
             maxAge: 1000 * 60 * 60 * 2,
         },
@@ -73,7 +71,6 @@ app.use("/api/admin", adminRoutes);
 // =========================
 //  FALLBACK SPA
 // =========================
-// Esto debe ir AL FINAL, después de archivos estáticos y rutas API
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });

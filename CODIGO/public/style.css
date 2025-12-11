@@ -1,19 +1,21 @@
 /* ======================================== */
 /* ESTILO EN GENERAL */
 /* ======================================== */
-html,
-body {
+html {
     height: 100%;
-    display: flex;
-    flex-direction: column;
     margin: 0;
     overflow-x: hidden;
 }
 
 body {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    overflow-x: hidden;
     padding-bottom: 80px;
-    /* Compensar el footer fixed */
 }
+
 
 footer {
     position: fixed;
@@ -291,26 +293,29 @@ footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 20px;
+    padding: 0 20px;
 }
 
 .filter-option {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
+    gap: 6px;
+    padding: 8px 14px;
     background-color: #f9f9f9;
     border: 2px solid #ddd;
     border-radius: 12px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-width: fit-content;
 }
 
 .filter-option:hover {
     background-color: #eee;
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .filter-option.active {
@@ -327,7 +332,27 @@ footer {
 .filter-option span {
     font-size: 0.9rem;
     font-weight: bold;
+    white-space: nowrap;
 }
+
+/* Estilos específicos para el filtro de generaciones */
+#customFilterGenerations {
+    gap: 8px;
+    margin-top: 10px;
+}
+
+#customFilterGenerations .filter-option {
+    padding: 10px 16px;
+    min-width: 80px;
+    justify-content: center;
+    font-size: 0.95rem;
+}
+
+#customFilterGenerations .filter-option.active {
+    background-color: #e74c3c;
+    border-color: #c0392b;
+}
+
 
 /* ======================================== */
 /* DISEÑO GACHAMÓN */
@@ -336,7 +361,9 @@ footer {
     text-align: center;
     padding: 0px;
     margin-top: 0;
-    overflow: hidden;
+    overflow: visible;
+    min-height: 100vh;
+    padding-bottom: 100px;
 }
 
 #coinCount {
@@ -397,8 +424,12 @@ footer {
 }
 
 .gachamon-pokemon h3 {
-    font-size: 1rem;
-    margin-bottom: 5px;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+    word-wrap: break-word;
+    max-width: 100%;
+    padding: 0 10px;
 }
 
 .gachamon-pokemon .pokemon-types {
@@ -462,7 +493,9 @@ footer {
 #pcSection {
     text-align: center;
     padding: 20px;
-    overflow: hidden;
+    overflow: visible;
+    min-height: 100vh;
+    padding-bottom: 120px;
 }
 
 /* Contenedor general del PC */
@@ -641,7 +674,9 @@ footer {
 #miEquipoSection {
     margin-top: 20px;
     padding: 20px 0;
-    overflow: hidden;
+    overflow: visible;
+    min-height: 100vh;
+    padding-bottom: 120px;
 }
 
 /* Contenedor del equipo (Grid + Panel de info) */
@@ -652,8 +687,8 @@ footer {
     gap: 30px;
     max-width: 800px;
     margin: 0 auto;
-    height: 400px;
-    /* Menos altura para que no se coma el footer */
+    height: auto;
+    min-height: 400px;
 }
 
 /* GRID de slots (izquierda) */
@@ -798,10 +833,8 @@ footer {
     /* Grid de la caja con aún menos columnas */
     .box-grid {
         grid-template-columns: repeat(3, 1fr);
-        /* De 5 a 3 columnas */
     }
 
-    /* Panel de información del Pokémon más pequeño y fluido */
     .pokemon-info-panel {
         width: 90%;
         height: auto;
@@ -809,18 +842,15 @@ footer {
         top: auto;
     }
 
-    /* Tamaño de los slots en el PC */
     .box-slot {
         width: 60px;
         height: 60px;
     }
 
-    /* Imagen de los Pokémon dentro de los slots */
     .box-slot img {
         width: 48px;
     }
 
-    /* Tamaño del texto en la cabecera del PC */
     .pc-header h3 {
         font-size: 1.2rem;
     }
@@ -830,68 +860,53 @@ footer {
 /* MI EQUIPO - RESPONSIVE */
 /* ============================ */
 
-/* Para pantallas medianas (tablets y laptops pequeñas) */
 @media (max-width: 992px) {
 
-    /* Contenedor principal en columna */
     .mi-equipo-container {
         flex-direction: column;
-        /* Se apilan el grid y el panel de info */
         align-items: center;
         height: auto;
     }
 
-    /* El grid de slots del equipo */
     .equipo-grid {
         grid-template-columns: repeat(3, 1fr);
-        /* De 2 columnas a 3 */
         width: 100%;
         justify-items: center;
     }
 
-    /* Panel de información del equipo más ancho */
     .equipo-info-panel {
         width: 90%;
     }
 }
 
-/* Para pantallas pequeñas (móviles) */
 @media (max-width: 576px) {
 
-    /* Grid de slots del equipo con menos columnas */
     .equipo-grid {
         grid-template-columns: repeat(2, 1fr);
-        /* 2 columnas en móviles */
     }
 
-    /* Tamaño de los slots del equipo */
     .equipo-slot {
         width: 80px;
         height: 80px;
     }
 
-    /* Tamaño de las imágenes de los Pokémon del equipo */
     .equipo-slot img {
         width: 60px;
     }
 
-    /* Panel de información más compacto */
     .equipo-info-panel {
         width: 95%;
         padding: 10px;
     }
 
-    /* Acomoda el input del nombre en columna */
     .info-name-container {
         flex-direction: column;
     }
 
-    /* Tamaño del campo de nombre del Pokémon */
     #equipoPokemonName {
         font-size: 1rem;
     }
 
-    /* Tamaño del botón "Devolver al PC" */
     #returnToPcButton {
         font-size: 0.9rem;
     }
@@ -901,28 +916,424 @@ footer {
 /* POKEDEX - RESPONSIVE */
 /* ============================ */
 
-/* Para pantallas medianas y móviles */
 @media (max-width: 768px) {
 
-    /* Reduce el espacio entre filtros */
     .custom-filter {
+        gap: 6px;
+        padding: 0 10px;
+    }
+
+    .filter-option {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+
+    .filter-option img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .filter-option span {
+        font-size: 0.75rem;
+    }
+
+    #searchFormPokedex {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 0 15px;
+    }
+
+    #searchFormPokedex input,
+    #pokemonInputPokedex {
+        width: 70%;
+        max-width: 250px;
+        min-width: 150px;
+        font-size: 1rem;
+        padding: 10px 12px;
+    }
+
+    #searchFormPokedex button,
+    #searchButtonPokedex {
+        padding: 10px 14px;
+        font-size: 1rem;
+    }
+
+    .pokemon-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .pokemon-card {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    #searchFormPokedex {
+        flex-direction: row;
+        justify-content: center;
         gap: 8px;
     }
 
-    /* Apila el input de búsqueda en vertical */
-    #searchFormPokedex {
-        flex-direction: column;
+    #searchFormPokedex input,
+    #pokemonInputPokedex {
+        width: 65%;
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+
+    .pokemon-grid {
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
 
-    /* Ancho del input de búsqueda */
-    #searchFormPokedex input {
-        width: 80%;
+    .filter-option {
+        padding: 5px 6px;
     }
 
-    /* El grid de la Pokédex con menos columnas */
-    .pokemon-grid {
+    .filter-option span {
+        display: none;
+    }
+
+    .filter-option img {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* ============================ */
+/* GACHAMON - RESPONSIVE */
+/* ============================ */
+
+@media (max-width: 768px) {
+    #gachamonSection {
+        padding: 10px;
+    }
+
+    #gachamonSection h1 {
+        font-size: 2rem;
+    }
+
+    .coin-display {
+        font-size: 1rem;
+    }
+
+    .coin-icon {
+        width: 28px;
+    }
+
+    #gachamonButton,
+    #gachamonAddCoins {
+        padding: 12px 20px;
+        font-size: 1rem;
+        width: 80%;
+        max-width: 250px;
+    }
+
+    .gachamon-sprite {
+        width: 140px;
+    }
+
+    #gachamonResult {
+        margin-bottom: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    #gachamonSection h1 {
+        font-size: 1.6rem;
+    }
+
+    #gachamonButton,
+    #gachamonAddCoins {
+        width: 90%;
+        padding: 14px 16px;
+        font-size: 0.95rem;
+    }
+
+    .gachamon-sprite {
+        width: 120px;
+    }
+
+    .gachamon-pokemon h3 {
+        font-size: 0.9rem;
+    }
+}
+
+/* ============================ */
+/* PC DE ALGUIEN - RESPONSIVE MEJORADO */
+/* ============================ */
+
+@media (max-width: 768px) {
+    .pc-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .pc-title {
+        font-size: 1.8rem !important;
+    }
+
+    .pc-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .pc-header h3 {
+        font-size: 1rem;
+    }
+
+    .pc-header button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .pokemon-info-panel {
+        width: 95%;
+        height: auto;
+        margin-right: 0;
+        margin-bottom: 20px;
+        position: relative;
+        top: auto;
+        order: -1;
+    }
+
+    .box-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .box-slot {
+        width: 70px;
+        height: 70px;
+    }
+
+    .box-slot img {
+        width: 55px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pc-title {
+        font-size: 1.4rem !important;
+    }
+
+    .box-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+
+    .box-slot {
+        width: 55px;
+        height: 55px;
+    }
+
+    .box-slot img {
+        width: 42px;
+    }
+
+    .empty-slot {
+        width: 30px;
+        height: 30px;
+    }
+
+    .pokemon-info-panel {
+        padding: 15px;
+    }
+
+    .pokemon-info-panel img {
+        width: 80px;
+    }
+
+    .pokemon-info-panel h4 {
+        font-size: 1rem;
+    }
+
+    #releaseButton,
+    #addToTeamButton {
+        font-size: 0.85rem;
+        padding: 10px;
+    }
+}
+
+/* ============================ */
+/* MI EQUIPO - RESPONSIVE MEJORADO */
+/* ============================ */
+
+@media (max-width: 768px) {
+    #miEquipoSection {
+        padding: 10px;
+    }
+
+    #miEquipoSection h1 {
+        font-size: 1.8rem;
+    }
+
+    .mi-equipo-container {
+        flex-direction: column;
+        gap: 20px;
+        height: auto;
+        padding: 0 10px;
+    }
+
+    .equipo-grid {
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%;
+        max-width: 350px;
+        justify-items: center;
+    }
+
+    .equipo-slot {
+        width: 90px;
+        height: 90px;
+    }
+
+    .equipo-slot img {
+        width: 70px;
+    }
+
+    .equipo-info-panel {
+        width: 95%;
+        max-width: 400px;
+    }
+
+    .pokemon-details {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .equipo-artwork {
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    #miEquipoSection h1 {
+        font-size: 1.5rem;
+    }
+
+    .equipo-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .equipo-slot {
+        width: 75px;
+        height: 75px;
+    }
+
+    .equipo-slot img {
+        width: 55px;
+    }
+
+    .equipo-info-panel {
+        padding: 12px;
+    }
+
+    #equipoPokemonName {
+        font-size: 0.9rem;
+    }
+
+    #returnToPcButton {
+        font-size: 0.85rem;
+        padding: 10px;
+    }
+
+    .equipo-artwork {
+        max-width: 100px;
+    }
+
+    .pokemon-description p {
+        font-size: 0.85rem;
+    }
+}
+
+/* ============================ */
+/* HOME - RESPONSIVE */
+/* ============================ */
+
+@media (max-width: 768px) {
+    #homeSection h1 {
+        font-size: 2rem;
+    }
+
+    #searchForm {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    #pokemonInput {
+        max-width: 200px;
+    }
+
+    #pokemonContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #pokemonImage {
+        width: 150px;
+        height: 150px;
+    }
+
+    #pokemonInfo {
+        text-align: center;
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    #homeSection h1 {
+        font-size: 1.6rem;
+    }
+
+    #pokemonInput {
+        max-width: 180px;
+        font-size: 0.9rem;
+    }
+
+    #pokemonImage {
+        width: 120px;
+        height: 120px;
+    }
+
+    #pokemonName {
+        font-size: 1.2rem;
+    }
+
+    #shinyButton {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+}
+
+/* ============================ */
+/* INTRO SCREEN - RESPONSIVE */
+/* ============================ */
+
+@media (max-width: 576px) {
+    .intro-title {
+        font-size: 2.5rem;
+    }
+
+    .intro-logo-img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .intro-button {
+        font-size: 1.2rem;
+        padding: 10px 25px;
     }
 }
 

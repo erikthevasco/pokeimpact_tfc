@@ -44,14 +44,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentTypeFilter = null;
     let currentGenFilter = null;
 
-    // ✅ PC ahora se carga desde BD, inicialmente vacío
     let pcBoxes = [];
     for (let i = 0; i < MAX_BOXES; i++) {
         pcBoxes.push(createNewBox());
     }
     let currentBoxIndex = 0;
 
-    // ✅ Mi Equipo ahora se carga desde BD, inicialmente vacío
     let miEquipo = new Array(MAX_TEAM_SIZE).fill(null);
 
     // ==============================
@@ -569,7 +567,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // ✅ GUARDAR POKÉMON EN LA BASE DE DATOS
+    //GUARDAR POKÉMON EN LA BASE DE DATOS
     async function savePokemonToDB(pokemon, boxNumber, position) {
         console.log("🔵 Intentando guardar en BD:", pokemon);
         try {
@@ -606,7 +604,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ✅ AÑADIR POKÉMON AL PC (CON BASE DE DATOS)
+    //AÑADIR POKÉMON AL PC (CON BASE DE DATOS)
     async function addPokemonToPC(pokemon) {
         for (let boxIndex = 0; boxIndex < pcBoxes.length; boxIndex++) {
             const box = pcBoxes[boxIndex];
@@ -630,7 +628,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return false;
     }
 
-    // ✅ MOSTRAR CAJA ACTUAL
+    //MOSTRAR CAJA ACTUAL
     function showCurrentBox() {
         boxGrid.innerHTML = "";
         boxName.textContent = `Caja ${currentBoxIndex + 1}`;
@@ -666,7 +664,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ✅ MOSTRAR INFO EN PANEL
+    //MOSTRAR INFO EN PANEL
     function showPokemonInfoInPanel(index) {
         const pokemon = pcBoxes[currentBoxIndex][index];
         const panel = document.getElementById("pcInfoPanel");
@@ -749,7 +747,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     }
 
-    // ✅ LIBERAR POKÉMON (CON BASE DE DATOS)
+    //LIBERAR POKÉMON (CON BASE DE DATOS)
     async function releasePokemon(index) {
         const pokemon = pcBoxes[currentBoxIndex][index];
         if (!pokemon) return;
@@ -786,7 +784,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // MI EQUIPO
     // ==============================
 
-    // ✅ GUARDAR POKÉMON EN EL EQUIPO (BD)
+    //GUARDAR POKÉMON EN EL EQUIPO (BD)
     async function savePokemonToTeam(pokemon, position) {
         console.log("🔵 Intentando guardar en equipo BD:", pokemon, "posición:", position);
         try {
@@ -823,7 +821,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ✅ ELIMINAR POKÉMON DEL EQUIPO (BD)
+    //ELIMINAR POKÉMON DEL EQUIPO (BD)
     async function removePokemonFromTeam(dbId) {
         try {
             const res = await fetch(`http://localhost:5000/api/team/${dbId}`, {
@@ -845,7 +843,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ✅ ACTUALIZAR NOMBRE EN BD
+    //ACTUALIZAR NOMBRE EN BD
     async function updatePokemonNameInTeam(dbId, newName) {
         try {
             const res = await fetch(`http://localhost:5000/api/team/${dbId}`, {
@@ -867,11 +865,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return false;
         }
     }
-
-    // ✅ YA NO SE USA localStorage
-    // function saveEquipo() {
-    //     localStorage.setItem("miEquipo", JSON.stringify(miEquipo));
-    // }
 
     function renderTeam() {
         const gridContainer = document.getElementById("equipoGrid");

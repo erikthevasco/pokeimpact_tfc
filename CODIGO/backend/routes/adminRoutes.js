@@ -48,7 +48,7 @@ router.get("/users", requireAdmin, (req, res) => {
             return res.status(500).json({ message: "Error obteniendo usuarios" });
         }
 
-        // Para cada usuario, contamos sus pokemon
+        // Para cada usuario, contamos sus pokemons
         const promises = users.map(user => {
             return new Promise((resolve) => {
                 db.query("SELECT COUNT(*) as pc_count FROM pokemon_pc WHERE user_id = ?", [user.id], (err, pcResult) => {

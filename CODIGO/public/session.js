@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const homeSection = document.getElementById("homeSection");
     const introScreen = document.getElementById("introScreen");
 
-    // ✅ Variable global para saber si el usuario está logueado
+    //Variable global para saber si el usuario está logueado
     window.isUserLoggedIn = false;
 
     function showUserSection(username) {
@@ -12,14 +12,14 @@ document.addEventListener("DOMContentLoaded", function () {
         userSection.classList.remove("d-none");
         usernameDisplay.textContent = username;
 
-        // ✅ Marcar como logueado
+        //Marcar como logueado
         window.isUserLoggedIn = true;
     }
 
     function hideUserSection() {
         document.getElementById("userSection").classList.add("d-none");
 
-        // ✅ Marcar como no logueado
+        //Marcar como no logueado
         window.isUserLoggedIn = false;
     }
 
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         section.classList.remove("d-none");
     }
 
-    // ✅ NUEVA FUNCIÓN: Verificar si el usuario está logueado
+    //NUEVA FUNCIÓN: Verificar si el usuario está logueado
     function requireAuth(callback, sectionName = "esta sección") {
         if (!window.isUserLoggedIn) {
             alert(`Debes iniciar sesión para acceder a ${sectionName}`);
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return true;
     }
 
-    // ✅ NUEVA FUNCIÓN: Cargar PC desde la base de datos
+    //NUEVA FUNCIÓN: Cargar PC desde la base de datos
     async function loadPCFromDB() {
         try {
             const res = await fetch("http://localhost:5000/api/pc", {
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ✅ NUEVA FUNCIÓN: Cargar equipo desde la base de datos
+    //Cargar equipo desde la base de datos
     async function loadTeamFromDB() {
         try {
             const res = await fetch("http://localhost:5000/api/team", {
@@ -111,10 +111,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 hideAuthButtons();
                 showSection(homeSection);
 
-                // ✅ CARGAR PC DESDE BD
+                //CARGAR PC DESDE BD
                 loadPCFromDB();
 
-                // ✅ CARGAR EQUIPO DESDE BD
+                //CARGAR EQUIPO DESDE BD
                 loadTeamFromDB();
             }
         })
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const password = document.getElementById("loginPassword").value.trim();
         if (!username || !password) return alert("Todos los campos son obligatorios");
 
-        // ✅ ADMIN SECRET VIEW - Primero hacer login real, luego redirigir
+        //ADMIN SECRET VIEW - Primero hacer login real, luego redirigir
         if (username === "admin") {
             fetch("http://localhost:5000/api/users/login", {
                 method: "POST",
@@ -169,10 +169,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     showSection(homeSection);
                     document.getElementById("loginForm").reset();
 
-                    // ✅ CARGAR PC DESDE BD DESPUÉS DEL LOGIN
+                    //CARGAR PC DESDE BD DESPUÉS DEL LOGIN
                     loadPCFromDB();
 
-                    // ✅ CARGAR EQUIPO DESDE BD DESPUÉS DEL LOGIN
+                    //CARGAR EQUIPO DESDE BD DESPUÉS DEL LOGIN
                     loadTeamFromDB();
                 } else {
                     alert(data.message);
@@ -204,10 +204,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 showSection(homeSection);
                 document.getElementById("registerForm").reset();
 
-                // ✅ CARGAR PC DESDE BD DESPUÉS DEL REGISTRO (estará vacío)
+                //CARGAR PC DESDE BD DESPUÉS DEL REGISTRO (estará vacío)
                 loadPCFromDB();
 
-                // ✅ CARGAR EQUIPO DESDE BD DESPUÉS DEL REGISTRO (estará vacío)
+                //CARGAR EQUIPO DESDE BD DESPUÉS DEL REGISTRO (estará vacío)
                 loadTeamFromDB();
             })
             .catch(console.error);
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ==============================
-    // ✅ PROTECCIÓN DE NAVEGACIÓN
+    // PROTECCIÓN DE NAVEGACIÓN
     // ==============================
 
     // Home siempre es accesible

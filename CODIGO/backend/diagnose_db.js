@@ -1,4 +1,3 @@
-
 import db from "./db.js";
 
 console.log("Testing DB Connection...");
