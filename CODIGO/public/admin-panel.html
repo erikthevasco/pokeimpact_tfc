@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PokéImpact - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- NAVBAR ADMIN -->
+        <div class="admin-nav">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2> <img src="img/logoAdmin.png" alt="Logo" width="40" height="40" class="me-2">
+                        PokeImpact Vista Admin</h2>
+                </div>
+                <button class="btn btn-danger" id="adminLogout">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="btn-group w-100" role="group">
+                <button class="btn btn-admin active" data-section="dashboard">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </button>
+                <button class="btn btn-outline-secondary" data-section="users">
+                    <i class="bi bi-people-fill"></i> Usuarios
+                </button>
+                <button class="btn btn-outline-secondary" data-section="pcs">
+                    <i class="bi bi-laptop"></i> PCs
+                </button>
+                <button class="btn btn-outline-secondary" data-section="teams">
+                    <i class="bi bi-collection-fill"></i> Equipos
+                </button>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DASHBOARD -->
+        <div id="dashboardSection" class="admin-section active">
+            <h3 class="mb-4">📊 Estadísticas Generales</h3>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <h5><i class="bi bi-people-fill"></i> Total Usuarios</h5>
+                        <h2 id="totalUsers">0</h2>
+                        <small>Usuarios registrados</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <h5><i class="bi bi-laptop"></i> Total Pokémon en PCs</h5>
+                        <h2 id="totalPokemonPC">0</h2>
+                        <small>Pokémon almacenados</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <h5><i class="bi bi-collection-fill"></i> Total Equipos</h5>
+                        <h2 id="totalTeams">0</h2>
+                        <small>Pokémon en equipos</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN USUARIOS -->
+        <div id="usersSection" class="admin-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3><i class="bi bi-people-fill"></i> Gestión de Usuarios</h3>
+                <input type="text" class="form-control w-25" id="searchUsers" placeholder="🔍 Buscar usuario...">
+            </div>
+
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Pokémon en PC</th>
+                            <th>Equipo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center">Cargando usuarios...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECCIÓN PCS -->
+        <div id="pcsSection" class="admin-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3><i class="bi bi-laptop"></i> Pokémon en PCs</h3>
+                <div class="d-flex gap-2">
+                    <select class="form-select" id="filterUser">
+                        <option value="">Todos los usuarios</option>
+                    </select>
+                    <select class="form-select" id="filterShiny">
+                        <option value="">Todos</option>
+                        <option value="1">Solo Shiny</option>
+                        <option value="0">No Shiny</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Pokémon</th>
+                            <th>Sprite</th>
+                            <th>Caja</th>
+                            <th>Shiny</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pcsTableBody">
+                        <tr>
+                            <td colspan="8" class="text-center">Cargando PCs...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECCIÓN EQUIPOS -->
+        <div id="teamsSection" class="admin-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3><i class="bi bi-collection-fill"></i> Equipos Pokémon</h3>
+                <select class="form-select w-25" id="filterTeamUser">
+                    <option value="">Todos los usuarios</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Pokémon</th>
+                            <th>Sprite</th>
+                            <th>Posición</th>
+                            <th>Shiny</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamsTableBody">
+                        <tr>
+                            <td colspan="8" class="text-center">Cargando equipos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales
+        let allUsers = [];
+        let allPCs = [];
+        let allTeams = [];
+
+        // NAVEGACIÓN ENTRE SECCIONES
+        document.querySelectorAll('[data-section]').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('[data-section]').forEach(b => {
+                    b.classList.remove('btn-admin', 'active');
+                    b.classList.add('btn-outline-secondary');
+                });
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-admin', 'active');
+
+                const section = this.dataset.section;
+                document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section + 'Section').classList.add('active');
+
+                loadSectionData(section);
+            });
+        });
+
+        // LOGOUT
+        document.getElementById('adminLogout').addEventListener('click', () => {
+            if (confirm('¿Cerrar sesión de administrador?')) {
+                window.location.href = '/';
+            }
+        });
+
+        // CARGAR DATOS DE SECCIÓN
+        function loadSectionData(section) {
+            switch (section) {
+                case 'dashboard': loadDashboard(); break;
+                case 'users': loadUsers(); break;
+                case 'pcs': loadPCs(); break;
+                case 'teams': loadTeams(); break;
+            }
+        }
+
+        // ========== DASHBOARD ==========
+        async function loadDashboard() {
+            document.getElementById('totalUsers').textContent = '...';
+            document.getElementById('totalPokemonPC').textContent = '...';
+            document.getElementById('totalTeams').textContent = '...';
+
+            try {
+                const response = await fetch('/api/admin/stats');
+                if (!response.ok) throw new Error('Error al cargar');
+                const stats = await response.json();
+
+                document.getElementById('totalUsers').textContent = stats.totalUsers;
+                document.getElementById('totalPokemonPC').textContent = stats.totalPC;
+                document.getElementById('totalTeams').textContent = stats.totalTeams;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('totalUsers').textContent = 'Error';
+                document.getElementById('totalPokemonPC').textContent = 'Error';
+                document.getElementById('totalTeams').textContent = 'Error';
+            }
+        }
+
+        // ========== USUARIOS ==========
+        async function loadUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Cargando...</td></tr>';
+
+            try {
+                const response = await fetch('/api/admin/users');
+                if (!response.ok) throw new Error('Error al cargar');
+                allUsers = await response.json();
+                renderUsers(allUsers);
+                populateUserFilters();
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error al cargar usuarios</td></tr>';
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay usuarios</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${user.pokemon_pc_count}</td>
+                    <td>${user.pokemon_team_count}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id}, '${user.username}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ========== PCs ==========
+        async function loadPCs() {
+            const tbody = document.getElementById('pcsTableBody');
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center">Cargando...</td></tr>';
+
+            try {
+                const response = await fetch('/api/admin/pcs');
+                if (!response.ok) throw new Error('Error al cargar');
+                allPCs = await response.json();
+                renderPCs(allPCs);
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error al cargar PCs</td></tr>';
+            }
+        }
+
+        function renderPCs(pcs) {
+            const tbody = document.getElementById('pcsTableBody');
+            if (pcs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay Pokémon en PCs</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = pcs.map(pc => `
+                <tr>
+                    <td>${pc.id}</td>
+                    <td>${pc.username}</td>
+                    <td>${pc.pokemon_name}</td>
+                    <td><img src="${pc.sprite_url}" width="50" alt="${pc.pokemon_name}"></td>
+                    <td>Caja ${pc.box_number}</td>
+                    <td>${pc.is_shiny ? '<span class="badge bg-warning">⭐ Sí</span>' : '<span class="badge bg-secondary">No</span>'}</td>
+                    <td>${formatDate(pc.created_at)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deletePokemonPC(${pc.id}, '${pc.pokemon_name}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ========== EQUIPOS ==========
+        async function loadTeams() {
+            const tbody = document.getElementById('teamsTableBody');
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center">Cargando...</td></tr>';
+
+            try {
+                const response = await fetch('/api/admin/teams');
+                if (!response.ok) throw new Error('Error al cargar');
+                allTeams = await response.json();
+                renderTeams(allTeams);
+                populateTeamUserFilters();
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error al cargar equipos</td></tr>';
+            }
+        }
+
+        function renderTeams(teams) {
+            const tbody = document.getElementById('teamsTableBody');
+            if (teams.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay Pokémon en equipos</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = teams.map(team => `
+                <tr>
+                    <td>${team.id}</td>
+                    <td>${team.username}</td>
+                    <td>${team.pokemon_name}</td>
+                    <td><img src="${team.sprite_url}" width="50" alt="${team.pokemon_name}"></td>
+                    <td>Pos. ${team.position}</td>
+                    <td>${team.is_shiny ? '<span class="badge bg-warning">⭐ Sí</span>' : '<span class="badge bg-secondary">No</span>'}</td>
+                    <td>${formatDate(team.created_at)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deletePokemonTeam(${team.id}, '${team.pokemon_name}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ========== FILTROS ==========
+        function populateUserFilters() {
+            const filterUser = document.getElementById('filterUser');
+            const uniqueUsers = [...new Set(allUsers.map(u => u.username))];
+            filterUser.innerHTML = '<option value="">Todos los usuarios</option>' +
+                uniqueUsers.map(u => `<option value="${u}">${u}</option>`).join('');
+        }
+
+        function populateTeamUserFilters() {
+            const filterTeamUser = document.getElementById('filterTeamUser');
+            const uniqueUsers = [...new Set(allTeams.map(t => t.username))];
+            filterTeamUser.innerHTML = '<option value="">Todos los usuarios</option>' +
+                uniqueUsers.map(u => `<option value="${u}">${u}</option>`).join('');
+        }
+
+        // Búsqueda usuarios
+        document.getElementById('searchUsers').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allUsers.filter(u =>
+                u.username.toLowerCase().includes(term) || u.email.toLowerCase().includes(term)
+            );
+            renderUsers(filtered);
+        });
+
+        // Filtros PCs
+        document.getElementById('filterUser').addEventListener('change', applyPCFilters);
+        document.getElementById('filterShiny').addEventListener('change', applyPCFilters);
+
+        function applyPCFilters() {
+            const userFilter = document.getElementById('filterUser').value;
+            const shinyFilter = document.getElementById('filterShiny').value;
+
+            let filtered = allPCs;
+            if (userFilter) filtered = filtered.filter(pc => pc.username === userFilter);
+            if (shinyFilter !== '') filtered = filtered.filter(pc => pc.is_shiny == shinyFilter);
+
+            renderPCs(filtered);
+        }
+
+        // Filtro equipos
+        document.getElementById('filterTeamUser').addEventListener('change', (e) => {
+            const userFilter = e.target.value;
+            if (!userFilter) renderTeams(allTeams);
+            else renderTeams(allTeams.filter(t => t.username === userFilter));
+        });
+
+        // ========== ELIMINACIÓN ==========
+        async function deleteUser(userId, username) {
+            if (!confirm(`¿Eliminar al usuario "${username}"?`)) return;
+
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error('Error');
+                alert('Usuario eliminado');
+                loadUsers();
+                loadDashboard();
+            } catch (error) {
+                alert('Error al eliminar');
+            }
+        }
+
+        async function deletePokemonPC(pcId, name) {
+            if (!confirm(`¿Eliminar a ${name} del PC?`)) return;
+
+            try {
+                const response = await fetch(`/api/admin/pcs/${pcId}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error('Error');
+                alert('Pokémon eliminado');
+                loadPCs();
+                loadDashboard();
+            } catch (error) {
+                alert('Error al eliminar');
+            }
+        }
+
+        async function deletePokemonTeam(teamId, name) {
+            if (!confirm(`¿Eliminar a ${name} del equipo?`)) return;
+
+            try {
+                const response = await fetch(`/api/admin/teams/${teamId}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error('Error');
+                alert('Pokémon eliminado');
+                loadTeams();
+                loadDashboard();
+            } catch (error) {
+                alert('Error al eliminar');
+            }
+        }
+
+        // ========== UTILIDADES ==========
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            return new Date(dateStr).toLocaleDateString('es-ES');
+        }
+
+        // Cargar dashboard al inicio
+        loadDashboard();
+    </script>
+</body>
+
+</html>

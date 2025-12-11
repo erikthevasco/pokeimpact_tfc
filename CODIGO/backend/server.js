@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes.js";
 import pcRoutes from "./routes/pcRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
 import db from "./db.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 const PORT = 5000;
@@ -67,6 +68,7 @@ app.use(
 app.use("/api/users", userRoutes);
 app.use("/api/pc", pcRoutes);
 app.use("/api/team", teamRoutes);
+app.use("/api/admin", adminRoutes);
 
 // =========================
 //  FALLBACK SPA

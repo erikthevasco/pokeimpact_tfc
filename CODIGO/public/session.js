@@ -132,6 +132,27 @@ document.addEventListener("DOMContentLoaded", function () {
         const password = document.getElementById("loginPassword").value.trim();
         if (!username || !password) return alert("Todos los campos son obligatorios");
 
+        // ✅ ADMIN SECRET VIEW - Primero hacer login real, luego redirigir
+        if (username === "admin") {
+            fetch("http://localhost:5000/api/users/login", {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            })
+                .then(async res => {
+                    const data = await res.json();
+                    if (res.ok) {
+                        // Login exitoso, redirigir al panel de admin
+                        window.location.href = "admin-panel.html";
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(console.error);
+            return;
+        }
+
         fetch("http://localhost:5000/api/users/login", {
             method: "POST",
             credentials: "include",
